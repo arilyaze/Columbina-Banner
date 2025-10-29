@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Columbina Banner - Countdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(219, 39, 119, 0.25) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(99, 102, 241, 0.2) 0%, transparent 50%);
+            animation: gradientMove 20s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50px, -50px) rotate(180deg); }
+        }
+
+        /* Floating petals */
+        .petal {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 182, 193, 0.6);
+            border-radius: 50% 0;
+            animation: petalFall 15s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Stars */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 4s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            text-align: center;
+            padding: 60px 50px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(30px);
+            border-radius: 40px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6),
+                        0 0 120px rgba(219, 39, 119, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            max-width: 1200px;
+            width: 95%;
+            position: relative;
+            z-index: 1;
+            animation: fadeInScale 1.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.85) translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .header-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .character-image {
+            width: 200px;
+            height: 280px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 3px solid rgba(219, 39, 119, 0.5);
+            box-shadow: 0 15px 50px rgba(219, 39, 119, 0.4),
+                        0 0 60px rgba(139, 92, 246, 0.3);
+            animation: float 6s ease-in-out infinite;
+            filter: brightness(1.05) contrast(1.1);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .title-section {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        h1 {
+            font-size: 4.5em;
+            margin-bottom: 15px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 30%, #be185d 60%, #9333ea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titlePulse 4s ease-in-out infinite;
+            position: relative;
+            text-shadow: 0 0 40px rgba(236, 72, 153, 0.5);
+        }
+
+        @keyframes titlePulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 25px rgba(236, 72, 153, 0.7));
+            }
+            50% {
+                filter: drop-shadow(0 0 45px rgba(219, 39, 119, 0.9));
+            }
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            opacity: 0.9;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fecdd3, #fbcfe8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .countdown {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin: 50px 0;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .time-unit {
+            background: linear-gradient(145deg, rgba(219, 39, 119, 0.12), rgba(139, 92, 246, 0.08));
+            padding: 45px 25px;
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .time-unit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .time-unit:hover::before {
+            left: 100%;
+        }
+
+        .time-unit::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 30px;
+            padding: 2px;
+            background: linear-gradient(145deg, rgba(236, 72, 153, 0.6), rgba(147, 51, 234, 0.6));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+
+        .time-unit:hover {
+            transform: translateY(-20px) scale(1.1);
+            border-color: rgba(236, 72, 153, 0.7);
+            box-shadow: 0 30px 60px rgba(219, 39, 119, 0.5),
+                        0 0 100px rgba(147, 51, 234, 0.4);
+        }
+
+        .time-unit:hover::after {
+            opacity: 1;
+        }
+
+        .number {
+            font-size: 5em;
+            font-weight: 900;
+            display: block;
+            background: linear-gradient(to bottom, #fff 0%, #fecdd3 50%, #fbcfe8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.7));
+        }
+
+        .label {
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.85;
+            font-weight: 600;
+            color: #fecdd3;
+        }
+
+        .progress-section {
+            margin-top: 55px;
+            padding-top: 45px;
+            border-top: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ec4899 0%, #db2777 30%, #be185d 60%, #9333ea 100%);
+            border-radius: 12px;
+            transition: width 1s ease;
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .percentage {
+            margin-top: 20px;
+            font-size: 1.2em;
+            opacity: 0.8;
+            color: #fecdd3;
+            font-weight: 400;
+        }
+
+        .timezone {
+            margin-top: 35px;
+            font-size: 1.05em;
+            opacity: 0.65;
+            font-weight: 300;
+            color: #cbd5e1;
+        }
+
+        @media (max-width: 1024px) {
+            .header-section {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .character-image {
+                width: 180px;
+                height: 250px;
+            }
+
+            h1 {
+                font-size: 3.5em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                letter-spacing: 2px;
+            }
+
+            .countdown {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 18px;
+            }
+
+            .time-unit {
+                padding: 35px 20px;
+            }
+
+            .number {
+                font-size: 3.5em;
+            }
+
+            .label {
+                font-size: 0.95em;
+                letter-spacing: 2px;
+            }
+
+            .container {
+                padding: 40px 25px;
+            }
+
+            .character-image {
+                width: 150px;
+                height: 210px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <img src="https://static.zerochan.net/Columbina.1024.3704823.webp" class="character-image">
+            <div class="title-section">
+                <h1>Columbina Banner</h1>
+                <p class="subtitle">Countdown to Launch</p>
+            </div>
+        </div>
+        
+        <div class="countdown">
+            <div class="time-unit">
+                <span class="number" id="days">0</span>
+                <span class="label">Days</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="hours">0</span>
+                <span class="label">Hours</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="minutes">0</span>
+                <span class="label">Minutes</span>
+            </div>
+            <div class="time-unit">
+                <span class="number" id="seconds">0</span>
+                <span class="label">Seconds</span>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <p class="percentage" id="percentage">0% Complete</p>
+            <p class="timezone">🕐 Jordan Time (UTC+3) • January 14, 2026</p>
+        </div>
+    </div>
+
+    <script>
+        // Create falling petals
+        function createPetals() {
+            const petalCount = 30;
+            for (let i = 0; i < petalCount; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.animationDelay = Math.random() * 15 + 's';
+                petal.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                const size = Math.random() * 8 + 6;
+                petal.style.width = size + 'px';
+                petal.style.height = size + 'px';
+                document.body.appendChild(petal);
+            }
+        }
+
+        // Create stars
+        function createStars() {
+            const starCount = 60;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                document.body.appendChild(star);
+            }
+        }
+
+        createPetals();
+        createStars();
+
+        // Countdown logic
+        const startDate = new Date('2025-10-29T00:00:00+03:00');
+        const targetDate = new Date('2026-01-14T00:00:00+03:00');
+        const totalDuration = targetDate - startDate;
+
+        function updateCountdown() {
+            const now = new Date();
+            const diff = targetDate - now;
+            
+            if (diff <= 0) {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('percentage').textContent = '100% Complete - Banner Live! 🌸';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            
+            // Calculate progress
+            const elapsed = now - startDate;
+            const progress = Math.min((elapsed / totalDuration) * 100, 100);
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('percentage').textContent = progress.toFixed(1) + '% Complete';
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
